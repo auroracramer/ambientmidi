@@ -1,0 +1,8 @@
+*.mid
+*.wav
+*.midi
+*.pyc
+*.swp
+*.pkl
+.idea/*
+.models/*
