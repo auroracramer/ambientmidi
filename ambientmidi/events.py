@@ -57,10 +57,7 @@ def compute_pcengram(audio, **kwargs):
     return librosa.pcen(S=melspec, sr=sample_rate, hop_length=hop_length)
 
 
-def get_onset_idxs(
-    pcengram: np.ndarray,
-    **spec_kwargs,
-):
+def get_onsets(pcengram: np.ndarray, **spec_kwargs):
     sample_rate = spec_kwargs.get("sample_rate", DEFAULT_SPEC_KWARGS["sample_rate"])
     n_fft = spec_kwargs.get("n_fft", DEFAULT_SPEC_KWARGS["n_fft"])
     hop_length = spec_kwargs.get("hop_length", DEFAULT_SPEC_KWARGS["hop_lenth"])
@@ -86,7 +83,9 @@ def get_onset_idxs(
         pre_avg=0.10 * sample_rate // hop_length,
         post_avg=0.10 * sample_rate // hop_length,
     )
-    return librosa.core.frames_to_samples(onset_frames, hop_length=hop_length)
+    onset_idxs = librosa.core.frames_to_samples(onset_frames, hop_length=hop_length)
+    return onset_idxs, onset_frames, onset_env
+
 
 def truncate_silence(audio, n_fft, hop_length, min_clip_length):
     rms = librosa.feature.rms(
