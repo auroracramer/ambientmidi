@@ -1,4 +1,6 @@
 import pyaudio
+import resampy
+import soundfile as sf
 import numpy as np
 import noisereduce as nr
 
@@ -19,6 +21,14 @@ def record_audio(duration: float = 60.0, sample_rate: int = 16000, denoise=True)
     audio = rescale_audio(audio)
     if denoise:
         audio = nr.reduce_noise(y=audio, sr=sample_rate)
+    return audio
+
+
+def load_audio(path, sample_rate)
+    audio, sr = sf.read(str(path), always_2d=True)
+    audio = audio.mean(axis=-1) # convert to mono
+    if sr != sample_rate:
+        audio = resampy.resample(audio, sr, sample_rate)
     return audio
 
 
