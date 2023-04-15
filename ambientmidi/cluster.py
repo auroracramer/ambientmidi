@@ -66,8 +66,8 @@ def get_clip_clusters(
     X = np.array([x[cluster_feature_key] for x in event_clip_list])
 
     if n_clusters is None:
-        n_clusters, cluster_ids = find_best_kmeans_by_silihoutte()
-        print(f"* using {n_cvlusters} environmental clusters")
+        n_clusters, cluster_ids = find_best_kmeans_by_silihoutte(X, event_clip_list)
+        print(f"* using {n_clusters} environmental clusters")
     else:
         print(f"* getting {n_clusters} environmental clusters")
         kmeans = get_kmeans(event_clip_list, n_clusters, cluster_feature_key)
@@ -94,7 +94,9 @@ def get_clip_clusters(
         #cluster_item['medoid_tonality'] = medoid(X_tonality)
 
     if max_cluster_size:
-        reduce_large_clusters(clusters_to_events, max_cluster_size)
+        clusters_to_events = reduce_large_clusters(clusters_to_events, max_cluster_size)
+
+    return clusters_to_events
 
 
 def reduce_large_clusters(env_clusters_to_events, max_events=50):

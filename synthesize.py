@@ -9,6 +9,7 @@ from ambientmidi.audio import load_audio, record_audio
 from ambientmidi.events import compute_pcengram, get_event_clip_dicts, get_onsets
 from ambientmidi.cluster import get_clip_clusters
 from ambientmidi.render import render_song_from_events
+from ambientmidi.utils import NpEncoder
 
 
 def parse_args(args):
@@ -16,11 +17,11 @@ def parse_args(args):
     p.add_argument("midi_path", type=Path)
     p.add_argument("output_path", type=Path)
     p.add_argument("meta_dir", type=Path)
-    p.add_argument("sample_rate", type=int, default=16000)
-    p.add_argument("input_recording_path", nargs="?", type=Path)
-    p.add_argument("record_duration", type=int, default=60)
-    p.add_argument("midi_samples_per_instr", type=int, default=10)
-    p.add_argument("soundfont_path", nargs="?", type=Path)
+    p.add_argument("--sample_rate", type=int, default=16000)
+    p.add_argument("--input_recording_path", nargs="?", type=Path)
+    p.add_argument("--record_duration", type=int, default=60)
+    p.add_argument("--midi_samples_per_instr", type=int, default=10)
+    p.add_argument("--soundfont_path", nargs="?", type=Path)
 
     return vars(p.parse_args(args))
 
@@ -34,9 +35,9 @@ def main(
     meta_dir.mkdir(exist_ok=True, parents=True)
     meta_path = meta_dir.joinpath(f"{midi_path.stem}.json")
     if not meta_path.exists():
-        midi_info = preprocess_midi_file(midi_path, sample_rate, midi_samples_per_instr, soundfont_path)
+        midi_info = preprocess_midi_file(str(midi_path), sample_rate, midi_samples_per_instr, soundfont_path)
         with meta_path.open("w") as f:
-            json.dump(midi_info, f)
+            json.dump(midi_info, f, cls=NpEncoder)
     else:
         with meta_path.open("r") as f:
             midi_info = json.load(f)

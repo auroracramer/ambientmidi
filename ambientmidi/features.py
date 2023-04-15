@@ -85,7 +85,12 @@ def compute_envelope(audio, sr):
     return np.abs(analytic)
 
 
-def get_feature_dict(audio, sr, features=("audio", "mfcc", "pitch_hz", "tonality")):
+@_feature
+def compute_audio(audio, sr):
+    return audio
+
+
+def get_feature_dict(audio, sr, features=("audio", "mfcc", "pitch", "pitch_hz", "tonality")):
     res = {}
     for feat_name in features:
         if feat_name not in FEATURE_FUNCTIONS:

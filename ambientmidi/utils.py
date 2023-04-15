@@ -1,29 +1,7 @@
-import soundfile as sf
-import pyaudio
-import pickle as pk
 import numpy as np
-import resampy
-import pretty_midi
 import json
-import h5py
-from tqdm import tqdm
-from IPython.display import display, Audio
-import librosa
-import os
-import itertools
-import random
-import librosa.display
-import scipy.signal
-import matplotlib.pyplot as plt
-import noisereduce as nr
-import sklearn
-from audiolazy.lazy_synth import adsr
-from dppy.finite_dpps import FiniteDPP
-from sklearn_extra.cluster import KMedoids
-from sklearn.cluster import MiniBatchKMeans
-from sklearn.metrics import silhouette_score
-from scipy.signal import hilbert
 from collections.abc import Mapping
+
 
 class LazyDict(Mapping):
     def __init__(self, keys, func):
@@ -46,3 +24,13 @@ class LazyDict(Mapping):
 def qtile(a, q=45, *args, **kwargs):
     return np.percentile(a, q, *args, **kwargs)
 
+
+class NpEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super(NpEncoder, self).default(obj)

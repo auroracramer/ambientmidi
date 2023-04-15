@@ -60,7 +60,7 @@ def compute_pcengram(audio, **kwargs):
 def get_onsets(pcengram: np.ndarray, **spec_kwargs):
     sample_rate = spec_kwargs.get("sample_rate", DEFAULT_SPEC_KWARGS["sample_rate"])
     n_fft = spec_kwargs.get("n_fft", DEFAULT_SPEC_KWARGS["n_fft"])
-    hop_length = spec_kwargs.get("hop_length", DEFAULT_SPEC_KWARGS["hop_lenth"])
+    hop_length = spec_kwargs.get("hop_length", DEFAULT_SPEC_KWARGS["hop_length"])
     n_mels = spec_kwargs.get("n_mels", DEFAULT_SPEC_KWARGS["n_mels"])
     onset_env = librosa.onset.onset_strength(
         S=pcengram,
@@ -111,8 +111,8 @@ def get_event_clip_dicts(audio: np.ndarray, onset_idx_list: List, truncate_silen
     sample_rate = spec_kwargs.get("sample_rate", DEFAULT_SPEC_KWARGS["sample_rate"])
     n_fft = spec_kwargs.get("n_fft", DEFAULT_SPEC_KWARGS["n_fft"])
     hop_length = spec_kwargs.get("hop_length", DEFAULT_SPEC_KWARGS["hop_length"])
-    min_clip_length = spec_kwargs.get("min_clip_length", DEFAULT_SPEC_KWARGS["min_clip_length"]) * sample_rate
-    max_clip_length = spec_kwargs.get("max_clip_length", DEFAULT_SPEC_KWARGS["max_clip_length"]) * sample_rate
+    min_clip_length = int(spec_kwargs.get("min_clip_size_s", DEFAULT_SPEC_KWARGS["min_clip_size_s"]) * sample_rate)
+    max_clip_length = int(spec_kwargs.get("max_clip_size_s", DEFAULT_SPEC_KWARGS["max_clip_size_s"]) * sample_rate)
 
     # Compute features for event clips
     clip_list = []

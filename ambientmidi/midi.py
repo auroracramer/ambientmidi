@@ -1,5 +1,6 @@
 import pretty_midi
 import numpy as np
+from sklearn_extra.cluster import KMedoids
 from ambientmidi.features import get_feature_dict
 from pathlib import Path
 
@@ -67,10 +68,10 @@ def preprocess_midi_file(midi_path, sample_rate=16000, samples_per_instr=10, sou
             note_instr = pretty_midi.Instrument(program=program_name)
             note_pm.instruments.append(note_instr)
             note_instr.notes.append(pretty_midi.Note(velocity=int(velocity), pitch=int(pitch), start=0.0, end=duration))
-            note_audio = note_pm.fluidsynth(fs=sample_rate,
+            note_audio = note_pm.fluidsynth(fs=float(sample_rate),
                                             sf2_path=soundfont_path)
             # Compute audio features from synthesized audio
-            feature_dict = get_feature_dict(note_audio, sample_rate, no_audio=True)
+            feature_dict = get_feature_dict(note_audio, sample_rate, features=("mfcc", "pitch_hz", "tonality"))
             for event_idx in group_to_event_idxs[group_idx]:
                 cluster_item['events'][event_idx].update(feature_dict)
 
