@@ -4,3 +4,8 @@ scipy==1.7.0
 resampy==0.2.2
 pretty_midi==0.2.9
 PyAudio==0.2.11
+noisereduce==2.0.1
+h5py==3.8.0
+audiolazy==0.6
+dppy==0.3.2
+scikit-learn-extra==0.3.0
