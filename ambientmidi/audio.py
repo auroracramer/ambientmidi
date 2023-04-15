@@ -24,7 +24,7 @@ def record_audio(duration: float = 60.0, sample_rate: int = 16000, denoise=True)
     return audio
 
 
-def load_audio(path, sample_rate)
+def load_audio(path, sample_rate):
     audio, sr = sf.read(str(path), always_2d=True)
     audio = audio.mean(axis=-1) # convert to mono
     if sr != sample_rate:
