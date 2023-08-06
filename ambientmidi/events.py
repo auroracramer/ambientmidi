@@ -1,6 +1,7 @@
 import librosa
 import numpy as np
 from typing import List
+from ambientmidi.audio import normalize_loudness
 from ambientmidi.features import get_feature_dict
 from ambientmidi.utils import qtile
 
@@ -122,6 +123,8 @@ def get_event_clip_dicts(audio: np.ndarray, onset_idx_list: List, truncate_silen
         clip = audio[onset_idx:end_idx]
         if truncate_silence:
             clip = truncate_silence(clip, n_fft, hop_length, min_clip_length)
+
+        clip = normalize_loudness(clip, sample_rate)
 
         clip_dict = get_feature_dict(clip, sample_rate)
         clip_list.append(clip_dict)

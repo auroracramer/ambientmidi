@@ -3,6 +3,7 @@ import resampy
 import soundfile as sf
 import numpy as np
 import noisereduce as nr
+import pyloudnorm as ln
 
 SAMPLE_RATE = 16000
 
@@ -45,3 +46,12 @@ def rescale_audio(audio: np.ndarray):
 
     # Map to the range [-2**31, 2**31]
     return (audio_scaled * (2**31)).astype('float32')
+
+
+def normalize_loudness(audio: np.ndarray, sr: int,  target_db_lufs=-14.0, use_peak=True):
+    if use_peak:
+        return ln.normalize.peak(audio, target_db_lufs)
+    else:
+        meter = ln.Meter(sr)
+        loudness = meter.integrated_loudness(audio)
+        return ln.normalize.loudness(audio, loudness, target_db_lufs)
