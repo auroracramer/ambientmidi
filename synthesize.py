@@ -20,6 +20,7 @@ def parse_args(args):
     p.add_argument("--sample_rate", type=int, default=16000)
     p.add_argument("--input_recording_path", nargs="?", type=Path)
     p.add_argument("--record_duration", type=int, default=60)
+    p.add_argument("--max_song_duration", nargs="?", type=int)
     p.add_argument("--midi_samples_per_instr", type=int, default=10)
     p.add_argument("--soundfont_path", nargs="?", type=Path)
 
@@ -29,6 +30,7 @@ def parse_args(args):
 def main(
     midi_path: Path, output_path: Path, meta_dir: Path, sample_rate: int,
     record_duration: int, midi_samples_per_instr: int,
+    max_song_duration: Optional[float],
     input_recording_path: Optional[Path], soundfont_path: Optional[Path],
 ):
     # Preprocess input MIDI file to get note events and to get samples for each instrument
@@ -52,7 +54,7 @@ def main(
 
     event_clip_list = get_event_clip_dicts(audio, onset_idxs, sample_rate=sample_rate)
     env_clusters_to_events = get_clip_clusters(event_clip_list)
-    audio_out = render_song_from_events(midi_info, env_clusters_to_events)
+    audio_out = render_song_from_events(midi_info, env_clusters_to_events, max_song_duration=max_song_duration)
 
     sf.write(str(output_path), audio_out, sample_rate)
 

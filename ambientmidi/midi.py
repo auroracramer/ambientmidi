@@ -5,13 +5,15 @@ from ambientmidi.features import get_feature_dict
 from pathlib import Path
 
 
-def preprocess_midi_file(midi_path, sample_rate=16000, samples_per_instr=10, soundfont_path=None):
+def preprocess_midi_file(midi_path, sample_rate=16000, samples_per_instr=10, soundfont_path=None, max_song_duration=None):
     pm = pretty_midi.PrettyMIDI(midi_path)
     instr_to_events = {}
 
     print(f"           ~ collecting notes")
     for instr in pm.instruments:
         for note in instr.notes:
+            if max_song_duration and note.start >= max_song_duration:
+                continue
             # Get instrument name
             if instr.is_drum:
                 instr_name = f"{instr.name} - {pretty_midi.note_number_to_drum_name(note.pitch)}"

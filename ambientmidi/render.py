@@ -54,7 +54,7 @@ def apply_note_effects(
     return filtered
     
 
-def render_song_from_events(song_dict, filtered_env_clusters_to_events, sample_rate=16000):
+def render_song_from_events(song_dict, filtered_env_clusters_to_events, sample_rate=16000, max_song_duration=None):
     print(f"Creating environmental song || {song_dict['name']}")
     duration_padding = 1.0
     playback_speed = 1.0
@@ -65,7 +65,10 @@ def render_song_from_events(song_dict, filtered_env_clusters_to_events, sample_r
     cluster_feature_key = 'mfcc'
     apply_pitch_filtering = True
 
-    duration = song_dict['duration'] + duration_padding
+    if max_song_duration:
+        duration = max_song_duration + duration_padding
+    else:
+        duration = min(song_dict['duration'], max_song_duration) + duration_padding
     num_samples = int(duration * sample_rate / playback_speed)
     audio_out = np.zeros((num_samples,))
 
@@ -93,6 +96,9 @@ def render_song_from_events(song_dict, filtered_env_clusters_to_events, sample_r
         print(f"* Producing {len(instr_item['events'])} notes")
         for instr_event_dict in instr_item['events']:
             out_start_ts = instr_event_dict['midi_note']['start']
+            if max_song_duration and out_start_ts >= max_song_duration:
+                continue
+
             out_start_idx = int(out_start_ts * sample_rate / playback_speed)
             # Get closest event in feature space
             env_event_dict = min(
