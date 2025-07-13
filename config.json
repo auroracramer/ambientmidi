@@ -1,0 +1,52 @@
+{
+  "audio": {
+    "sample_rate": 16000,
+    "record_duration": 60.0,
+    "denoise_enabled": true,
+    "use_peak_normalization": true,
+    "target_db_lufs": -14.0,
+    "min_clip_size_s": 0.125,
+    "max_clip_size_s": 1.0
+  },
+  "spectrogram": {
+    "window_size_ms": 25.0,
+    "hop_size_ms": 10.0,
+    "n_mels": 40,
+    "power": 2.0
+  },
+  "midi": {
+    "samples_per_instrument": 10,
+    "soundfont_path": null,
+    "max_song_duration": null,
+    "velocity_range": [1, 127],
+    "pitch_range": [0, 127]
+  },
+  "render": {
+    "harmonic_decay": 0.5,
+    "num_harmonics": 4,
+    "dominant_harmonic": 0,
+    "resonance_quality": 45.0,
+    "attack": 0.03,
+    "decay": 0.1,
+    "sustain": 0.7,
+    "release": 0.1
+  },
+  "clustering": {
+    "algorithm": "kmedoids",
+    "random_state": 42,
+    "max_iter": 300,
+    "tol": 1e-4
+  },
+  "paths": {
+    "output_dir": "output",
+    "cache_dir": "cache",
+    "meta_dir": "meta",
+    "temp_dir": "temp"
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    "file_handler": null,
+    "console_handler": true
+  }
+}
