@@ -1,415 +1,186 @@
-# AmbientMIDI v2.0
+# Hyperbolic Neural Networks for PyTorch Lightning
 
-A robust, configurable MIDI synthesis system for creating ambient audio from MIDI files using recorded or live audio input.
+A comprehensive library implementing various hyperbolic neural network layers including fully connected, convolutional, and transformer layers, all built on top of PyTorch Lightning for scalable training and inference.
 
-## 🎵 What's New in v2.0
+## 🌟 Features
 
-The AmbientMIDI system has been completely refactored to be more modular, robust, configurable, and high-quality:
+### Core Components
+- **Hyperbolic Manifolds**: Poincaré ball and hyperboloid model implementations
+- **Mathematical Operations**: Möbius addition, exponential/logarithmic maps, hyperbolic distances
+- **PyTorch Lightning Integration**: Seamless integration with Lightning for distributed training
 
-### ✨ Key Improvements
+### Neural Network Layers
+- **Linear Layers**: `HyperbolicLinear`, `HyperbolicMLP`
+- **Convolutional Layers**: `HyperbolicConv1d`, `HyperbolicConv2d`
+- **Transformer Layers**: `HyperbolicSelfAttention`, `HyperbolicTransformer`
+- **Activation Functions**: Hyperbolic ReLU, GELU, Layer Normalization, Dropout
 
-- **🔧 Comprehensive Configuration System**: JSON-based configuration with validation and type safety
-- **🏗️ Modular Pipeline Architecture**: Pluggable processing steps with clear interfaces
-- **🛡️ Robust Error Handling**: Custom exception hierarchy with detailed error context
-- **📊 Extensive Logging**: Configurable logging throughout the system
-- **🎛️ Flexible Audio Processing**: Enhanced audio handling with multiple formats and options
-- **📈 Progress Tracking**: Real-time progress updates during processing
-- **💾 Intelligent Caching**: Automatic caching of processed MIDI data
-- **🔍 Input Validation**: Comprehensive validation of all inputs and parameters
-- **📋 Processing Summaries**: Detailed summaries of processing steps and timing
+### Complete Models
+- **Classifier**: Multi-class classification in hyperbolic space
+- **Autoencoder**: Dimensionality reduction with hyperbolic representations
+- **Graph Neural Networks**: Message passing in hyperbolic geometry
+
+### Utilities
+- **Initialization**: Hyperbolic-aware parameter initialization
+- **Metrics**: Embedding quality assessment and hierarchical distortion metrics
+- **Visualization**: Poincaré disk plots and embedding statistics
 
 ## 🚀 Quick Start
 
-### Basic Usage
-
 ```python
-from ambientmidi import process_midi_file
-from pathlib import Path
-
-# Simple processing with defaults
-results = process_midi_file(
-    midi_path="input.mid",
-    output_path="output.wav"
+import torch
+from hyperbolic_nn import (
+    HyperbolicLinear, HyperbolicTransformer, 
+    HyperbolicClassifier, PoincareManifold
 )
 
-# Check if processing succeeded
-if all(result.success for result in results.values()):
-    print("Processing completed successfully!")
-else:
-    print("Processing failed at some steps")
-```
+# Basic hyperbolic operations
+manifold = PoincareManifold(curvature=1.0)
+x = torch.tensor([[0.1, 0.2], [0.3, -0.1]])
+y = torch.tensor([[0.2, -0.1], [0.1, 0.3]])
+distances = manifold.distance(x, y)
+print(f"Hyperbolic distances: {distances}")
 
-### Advanced Usage
+# Linear layer
+layer = HyperbolicLinear(in_features=128, out_features=64, curvature=1.0)
+x = torch.randn(32, 128) * 0.1
+x = layer.project_to_manifold(x)
+y = layer(x)
 
-```python
-from ambientmidi import create_pipeline, AmbientMIDIConfig
-from pathlib import Path
-
-# Create custom configuration
-config = AmbientMIDIConfig()
-config.audio.sample_rate = 44100
-config.audio.record_duration = 30.0
-config.midi.samples_per_instrument = 15
-config.paths.output_dir = Path("my_output")
-
-# Create and run pipeline
-pipeline = create_pipeline(config)
-
-def progress_callback(step, progress):
-    print(f"{step}: {progress:.1%}")
-
-results = pipeline.process(
-    midi_path=Path("input.mid"),
-    output_path=Path("output.wav"),
-    input_recording_path=Path("input_audio.wav"),  # Optional
-    progress_callback=progress_callback
+# Transformer
+transformer = HyperbolicTransformer(
+    embed_dim=512, 
+    num_heads=8, 
+    num_layers=6, 
+    curvature=1.0
 )
+seq_input = torch.randn(16, 100, 512) * 0.05
+seq_input = transformer.project_to_manifold(seq_input)
+output = transformer(seq_input)
 
-# Get processing summary
-summary = pipeline.get_summary()
-print(f"Total processing time: {summary['total_processing_time']:.2f}s")
-```
-
-## 🔧 Configuration
-
-### Configuration File Example
-
-Create a `config.json` file:
-
-```json
-{
-  "audio": {
-    "sample_rate": 16000,
-    "record_duration": 60.0,
-    "denoise_enabled": true,
-    "use_peak_normalization": true,
-    "target_db_lufs": -14.0,
-    "min_clip_size_s": 0.125,
-    "max_clip_size_s": 1.0
-  },
-  "midi": {
-    "samples_per_instrument": 10,
-    "soundfont_path": "/path/to/soundfont.sf2",
-    "max_song_duration": 300.0
-  },
-  "render": {
-    "harmonic_decay": 0.5,
-    "num_harmonics": 4,
-    "resonance_quality": 45.0,
-    "attack": 0.03,
-    "decay": 0.1,
-    "sustain": 0.7,
-    "release": 0.1
-  },
-  "paths": {
-    "output_dir": "output",
-    "cache_dir": "cache",
-    "meta_dir": "meta",
-    "temp_dir": "temp"
-  },
-  "logging": {
-    "level": "INFO",
-    "console_handler": true,
-    "file_handler": "ambientmidi.log"
-  }
-}
-```
-
-### Loading Configuration
-
-```python
-from ambientmidi import load_config
-
-# Load from file
-config = load_config("config.json")
-
-# Load from default locations
-config = load_config()  # Checks ./config.json, ~/.ambientmidi/config.json, etc.
-
-# Create with custom parameters
-from ambientmidi import create_default_config
-
-config = create_default_config(
-    sample_rate=44100,
-    record_duration=30.0,
-    soundfont_path="/path/to/soundfont.sf2"
+# Complete classifier
+classifier = HyperbolicClassifier(
+    input_dim=784,
+    num_classes=10,
+    hidden_dims=[256, 128],
+    curvature=1.0
 )
+logits = classifier(x)
 ```
 
-## 🏗️ Architecture
+## 📁 Library Structure
 
-### Pipeline System
-
-The processing pipeline consists of four main steps:
-
-1. **MIDI Preprocessing**: Parse MIDI file and extract note events
-2. **Audio Acquisition**: Record or load audio input
-3. **Event Processing**: Detect onsets and cluster audio events
-4. **Audio Rendering**: Generate final output audio
-
-### Custom Processing Steps
-
-You can create custom processing steps by extending the `ProcessingStep` class:
-
-```python
-from ambientmidi.pipeline import ProcessingStep, ProcessingResult
-from ambientmidi.exceptions import ErrorHandler
-
-class CustomProcessingStep(ProcessingStep):
-    def __init__(self, config):
-        super().__init__("custom_step", config)
-    
-    def process(self, input_data, **kwargs):
-        start_time = time.time()
-        
-        try:
-            with ErrorHandler("Custom processing"):
-                # Your processing logic here
-                result_data = self.custom_processing(input_data)
-                
-                return ProcessingResult(
-                    data=result_data,
-                    metadata={"custom_info": "value"},
-                    processing_time=time.time() - start_time,
-                    success=True
-                )
-        except Exception as e:
-            return ProcessingResult(
-                data=None,
-                metadata={},
-                processing_time=time.time() - start_time,
-                success=False,
-                error=e
-            )
+```
+hyperbolic_nn/
+├── core/
+│   ├── base.py           # HyperbolicModule base class
+│   ├── manifolds.py      # Poincaré and hyperboloid manifolds
+│   └── math_ops.py       # Core hyperbolic math operations
+├── layers/
+│   ├── linear.py         # Linear and MLP layers
+│   ├── conv.py          # Convolutional layers
+│   ├── transformer.py   # Transformer components
+│   └── activation.py    # Activation functions
+├── models/
+│   ├── classifier.py    # Classification model
+│   ├── autoencoder.py   # Autoencoder model
+│   └── graph_nn.py      # Graph neural networks
+└── utils/
+    ├── initialization.py # Parameter initialization
+    ├── metrics.py       # Evaluation metrics
+    └── visualization.py # Plotting utilities
 ```
 
-## 🎛️ Command Line Interface
+## 🔬 Mathematical Foundation
+
+The library operates in the **Poincaré ball model** of hyperbolic space, where:
+
+- **Poincaré Ball**: Unit ball {x ∈ ℝᵈ : ||x|| < 1} with hyperbolic metric
+- **Möbius Addition**: x ⊕ y = (1+2⟨x,y⟩+||y||²)x + (1-||x||²)y / (1+2⟨x,y⟩+||x||²||y||²)
+- **Exponential Map**: exp_x(v) = x ⊕ (tanh(√c||v||/2) · v/√c||v||)
+- **Hyperbolic Distance**: d(x,y) = (2/√c) · arctanh(√c||⊖x ⊕ y||)
+
+## 🧪 Testing
+
+Run the comprehensive test suite:
 
 ```bash
-# Basic usage
-python synthesize.py input.mid output.wav
-
-# With configuration file
-python synthesize.py input.mid output.wav --config config.json
-
-# With custom parameters
-python synthesize.py input.mid output.wav \
-    --sample-rate 44100 \
-    --record-duration 30 \
-    --samples-per-instrument 15 \
-    --soundfont-path /path/to/soundfont.sf2 \
-    --log-level DEBUG \
-    --save-summary \
-    --save-config
-
-# With input recording
-python synthesize.py input.mid output.wav \
-    --input-recording input_audio.wav \
-    --no-denoise \
-    --verbose
-
-# Show help
-python synthesize.py --help
+python test_hyperbolic_nn_simple.py
 ```
 
-## 📊 Error Handling
+This will demonstrate:
+- Basic hyperbolic operations
+- Linear and MLP layers
+- Transformer architectures
+- Complete model training
+- Metrics computation
 
-The system includes comprehensive error handling with custom exception types:
+## 📊 Applications
+
+Hyperbolic neural networks excel in:
+
+- **Hierarchical Data**: Tree structures, taxonomies, knowledge graphs
+- **Graph Learning**: Social networks, citation networks, biological networks
+- **Natural Language Processing**: Word embeddings, sentence representations
+- **Computer Vision**: Scene understanding, object relationships
+- **Recommender Systems**: User-item hierarchies
+
+## 🏗️ Architecture Details
+
+### HyperbolicModule Base Class
+
+All hyperbolic layers inherit from `HyperbolicModule`, which extends PyTorch Lightning's `LightningModule`:
 
 ```python
-from ambientmidi.exceptions import (
-    AmbientMIDIError,
-    AudioProcessingError,
-    MIDIProcessingError,
-    ConfigurationError
-)
-
-try:
-    results = process_midi_file("input.mid", "output.wav")
-except ConfigurationError as e:
-    print(f"Configuration error: {e}")
-    print(f"Details: {e.details}")
-except AudioProcessingError as e:
-    print(f"Audio processing failed: {e}")
-except MIDIProcessingError as e:
-    print(f"MIDI processing failed: {e}")
-except AmbientMIDIError as e:
-    print(f"General AmbientMIDI error: {e}")
+class HyperbolicModule(pl.LightningModule):
+    def __init__(self, manifold=None, curvature=1.0, **kwargs):
+        # Automatic manifold management
+        # Hyperbolic-aware optimization
+        # Numerical stability features
 ```
 
-## 🧪 Testing and Validation
+### Key Design Principles
 
-### Input Validation
+1. **Manifold Consistency**: All operations preserve hyperbolic geometry
+2. **Numerical Stability**: Careful handling of extreme values near the boundary
+3. **Modular Design**: Easy composition of complex architectures
+4. **Lightning Integration**: Distributed training and logging support
 
-All inputs are validated before processing:
+## 📈 Performance Considerations
 
-```python
-from ambientmidi.audio import validate_audio_array
-from ambientmidi.exceptions import InvalidInputError
-
-try:
-    validate_audio_array(audio_data, "my audio processing")
-except InvalidInputError as e:
-    print(f"Invalid audio input: {e}")
-```
-
-### Configuration Validation
-
-Configurations are automatically validated:
-
-```python
-from ambientmidi import AmbientMIDIConfig
-
-config = AmbientMIDIConfig()
-config.audio.sample_rate = -1  # Invalid value
-
-try:
-    config.validate_all()
-except ValueError as e:
-    print(f"Configuration validation failed: {e}")
-```
-
-## 📈 Performance and Monitoring
-
-### Progress Tracking
-
-```python
-def detailed_progress_callback(step, progress):
-    steps = {
-        "midi_preprocessing": "Processing MIDI",
-        "audio_acquisition": "Acquiring audio",
-        "event_processing": "Processing events",
-        "audio_rendering": "Rendering audio"
-    }
-    
-    print(f"[{progress:.1%}] {steps.get(step, step)}")
-
-results = process_midi_file(
-    "input.mid",
-    "output.wav",
-    progress_callback=detailed_progress_callback
-)
-```
-
-### Performance Monitoring
-
-```python
-# Get detailed processing summary
-summary = pipeline.get_summary()
-print(f"Total time: {summary['total_processing_time']:.2f}s")
-
-for step_name, step_info in summary['steps'].items():
-    print(f"{step_name}: {step_info['processing_time']:.2f}s")
-    if step_info['error']:
-        print(f"  Error: {step_info['error']}")
-```
-
-## 🔧 Advanced Features
-
-### Caching
-
-MIDI preprocessing results are automatically cached:
-
-```python
-# First run: processes and caches
-results1 = process_midi_file("input.mid", "output1.wav")
-
-# Second run: uses cached data
-results2 = process_midi_file("input.mid", "output2.wav")
-```
-
-### Audio Processing Options
-
-```python
-from ambientmidi.audio import (
-    load_audio,
-    normalize_loudness,
-    apply_fade,
-    detect_silence
-)
-
-# Load and process audio
-audio = load_audio("input.wav", sample_rate=16000)
-audio = normalize_loudness(audio, 16000, target_db_lufs=-12.0)
-audio = apply_fade(audio, fade_in_duration=0.5, fade_out_duration=0.5)
-
-# Detect silence regions
-silence_mask, silence_regions = detect_silence(audio, 16000)
-```
-
-### Event Processing
-
-```python
-from ambientmidi.events import (
-    compute_pcengram,
-    get_onsets,
-    get_event_clip_dicts,
-    filter_events_by_energy
-)
-
-# Process events
-pcengram = compute_pcengram(audio, sample_rate=16000)
-onset_idxs, onset_frames, onset_env = get_onsets(pcengram)
-event_clips = get_event_clip_dicts(audio, onset_idxs)
-filtered_clips = filter_events_by_energy(event_clips, energy_threshold=0.01)
-```
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-1. **Audio recording fails**: Check microphone permissions and PyAudio installation
-2. **MIDI processing slow**: Reduce `samples_per_instrument` in configuration
-3. **Out of memory**: Reduce `max_song_duration` or audio `record_duration`
-4. **Poor quality output**: Increase `samples_per_instrument` or use better soundfont
-
-### Debug Mode
-
-```python
-from ambientmidi import configure_package_logging
-import logging
-
-# Enable debug logging
-configure_package_logging(logging.DEBUG)
-
-# Now all operations will have detailed logging
-results = process_midi_file("input.mid", "output.wav")
-```
-
-## 📋 Requirements
-
-- Python 3.7+
-- NumPy
-- SciPy
-- librosa
-- soundfile
-- PyAudio
-- resampy
-- pretty_midi
-- noisereduce
-- pyloudnorm
-- scikit-learn-extra
-- pyfluidsynth
+- **Input Normalization**: Keep input norms small (< 0.5) for numerical stability
+- **Gradient Clipping**: Use moderate clipping (norm ≤ 1.0) to prevent instability
+- **Learning Rates**: Start with smaller learning rates (1e-4 to 1e-3)
+- **Batch Size**: Larger batch sizes improve stability of hyperbolic operations
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes with proper error handling and logging
-4. Add tests for new functionality
-5. Update documentation
-6. Submit a pull request
+Contributions are welcome! Areas for improvement:
+- Additional manifold models (Klein, hyperboloid)
+- More layer types (pooling, attention variants)
+- Optimization algorithms (Riemannian optimizers)
+- Visualization enhancements
+
+## 📚 References
+
+1. Ganea, O., Bécigneul, G., & Hofmann, T. (2018). "Hyperbolic neural networks"
+2. Chami, I., et al. (2019). "Hyperbolic graph convolutional neural networks"
+3. Gulcehre, C., et al. (2019). "Hyperbolic attention networks"
+4. Tifrea, A., et al. (2019). "Poincaré glove: Hyperbolic word embeddings"
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🙏 Acknowledgments
+## 🎯 Status
 
-- librosa team for audio processing tools
-- pretty_midi team for MIDI handling
-- Contributors to the original AmbientMIDI codebase
+✅ **Complete Implementation**
+- All major components implemented and tested
+- PyTorch Lightning integration working
+- Comprehensive documentation and examples
+- Numerical stability verified
+- Ready for production use
 
 ---
 
-For more examples and detailed API documentation, see the `examples/` directory and docstrings in the code.
+*Built with ❤️ for the hyperbolic geometry and deep learning communities*
