@@ -139,6 +139,20 @@ from .utils import (
     NpEncoder
 )
 
+# Factories
+from .factories import (
+    ProcessingStepFactory,
+    ConfigurationFactory,
+    AudioProcessorFactory,
+    FeatureExtractorFactory,
+    ClusteringFactory,
+    PipelineFactory,
+    get_factory,
+    register_factory,
+    create_quick_pipeline,
+    create_components
+)
+
 # Convenience functions for common workflows
 def process_midi_file(
     midi_path,
@@ -334,6 +348,18 @@ __all__ = [
     "LazyDict",
     "qtile",
     "NpEncoder",
+    
+    # Factories
+    "ProcessingStepFactory",
+    "ConfigurationFactory",
+    "AudioProcessorFactory",
+    "FeatureExtractorFactory",
+    "ClusteringFactory",
+    "PipelineFactory",
+    "get_factory",
+    "register_factory",
+    "create_quick_pipeline",
+    "create_components",
     
     # Convenience functions
     "process_midi_file",
